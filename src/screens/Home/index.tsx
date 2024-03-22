@@ -1,10 +1,9 @@
 import React, {FC, useRef, useState} from 'react';
 import {
-  NativeModules,
   RefreshControl,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  View,
 } from 'react-native';
 import {HomeMyLocation, MyHomeMyLocationRef} from '../../components';
 
@@ -16,8 +15,8 @@ import {FlashSale} from './components/FlashSale';
 import {Header} from './components/Header';
 import {MemberCard} from './components/MemberCard';
 import {Slider} from './components/Slider';
-const {StatusBarManager} = NativeModules;
-const _screen_statusbar_height = StatusBarManager.HEIGHT;
+import {sizes} from '../../utils/size';
+
 const DEFAULT_GRADIENT_COLOR = ['#FFFFFF', '#FAFAFA', '#FFF3E0'];
 const WHITE_GRADIENT_COLOR = ['#FFFFFF', '#FFFFFF', '#FFFFFF'];
 
@@ -29,7 +28,7 @@ export const Home: FC<Props> = () => {
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
-    console.log('f :>> ', offsetY);
+
     const maxOffset = 20; // Điều chỉnh giá trị này để tăng hoặc giảm độ nhạy cảm
     if (offsetY > maxOffset) {
       const newColor = WHITE_GRADIENT_COLOR;
@@ -42,7 +41,7 @@ export const Home: FC<Props> = () => {
     }
   };
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <LinearGradient
         start={{x: 0, y: 1.0}}
         end={{x: 0, y: 0.0}}
@@ -54,14 +53,20 @@ export const Home: FC<Props> = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         stickyHeaderIndices={[0]}
-        contentContainerStyle={{paddingTop: _screen_statusbar_height}}
+        contentContainerStyle={{
+          paddingHorizontal: sizes._16sdp,
+        }}
         refreshControl={
           <RefreshControl
             refreshing={false}
             onRefresh={() => console.log('Pull to refresh')}
           />
         }>
-        <Header />
+        <Header
+          backgroundColor={
+            gradientColor === DEFAULT_GRADIENT_COLOR ? 'transparent' : '#FFFFFF'
+          }
+        />
         <MemberCard />
         <BrandService />
         <Slider />
@@ -70,7 +75,7 @@ export const Home: FC<Props> = () => {
         <Category />
       </ScrollView>
       <HomeMyLocation ref={myHomeMyLocationRef} />
-    </View>
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
